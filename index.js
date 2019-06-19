@@ -15,7 +15,11 @@ module.exports = (r = 255, g = 255, b = 255) => {
     const sixteenBitB = (b / 255) * 65535
     const child = spawn("osascript", ["-e", `choose color default color {${sixteenBitR}, ${sixteenBitG}, ${sixteenBitB}}`])
     return new Promise((res, rej) => {
-        child.on("error", e => rej(e))
+        let done = false
+        child.on("error", e => {
+            done = true
+            rej(e)
+        })
         child.stdout.on("data", part => {
             const chunk = part.toString().trim()
             if (chunk.match(rgbMatch)) {
@@ -23,6 +27,12 @@ module.exports = (r = 255, g = 255, b = 255) => {
                 const r = Math.floor((Number(parts[0].trim()) / 65535) * 255)
                 const g = Math.floor((Number(parts[1].trim()) / 65535) * 255)
                 const b = Math.floor((Number(parts[2].trim()) / 65535) * 255)
+                done = true
+                res([r, g, b])
+            }
+        })
+        child.on("exit", () => {
+            if (!done) {
                 res([r, g, b])
             }
         })

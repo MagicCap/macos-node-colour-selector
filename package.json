@@ -1,6 +1,6 @@
 {
   "name": "macos-node-colour-selector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Exposes the macOS colour selector in a easy to use Promise-based Node API.",
   "main": "index.js",
   "repository": {
